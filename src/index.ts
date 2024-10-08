@@ -1,41 +1,32 @@
 import express from 'express';
+import cors from 'cors';
 import { Pool } from 'pg';
 
 const app = express();
 const port = 3000;
 
-// Middleware para analizar el cuerpo de las solicitudes
+// Middleware
+app.use(cors()); // Habilitar CORS
 app.use(express.json());
 
-// Configuración de la conexión a PostgreSQL
+// Conexión a PostgreSQL
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'ejemplots', // Asegúrate de que sea el nombre correcto de tu base de datos
-    password: 'holamundo', // Asegúrate de colocar la contraseña correcta
+    database: 'ejemplots', // Cambia esto si es necesario
+    password: 'holamundo', // Asegúrate de que esto sea correcto
     port: 5432,
 });
 
-// Ruta para crear un nuevo usuario
+// Rutas
 app.post('/users', async (req, res) => {
     const { name, email } = req.body;
     try {
         const result = await pool.query('INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *', [name, email]);
         res.status(201).json(result.rows[0]);
-    } catch (error) {
-        console.error('Error inserting user:', error);
-        res.status(500).send('Error inserting user');
-    }
-});
-
-// Ruta para obtener todos los usuarios
-app.get('/users', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM users');
-        res.status(200).json(result.rows);
-    } catch (error) {
-        console.error('Error retrieving users:', error);
-        res.status(500).send('Error retrieving users');
+    } catch (err) {
+        console.error('Error inserting user:', err);
+        res.status(500).json({ error: 'Error inserting user' });
     }
 });
 

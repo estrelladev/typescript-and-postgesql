@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprobar API</title>
+    <script>
+        async function addUser() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            const response = await fetch('http://localhost:3000/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email })
+            });
+
+            const result = await response.json();
+            document.getElementById('result').innerText = JSON.stringify(result);
+        }
+    </script>
+</head>
+<body>
+    <h1>Agregar Usuario</h1>
+    <input type="text" id="name" placeholder="Nombre" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <button onclick="addUser()">Agregar</button>
+    <h2>Resultado:</h2>
+    <pre id="result"></pre>
+</body>
+</html>
